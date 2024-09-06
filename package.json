@@ -21,5 +21,8 @@
   },
   "files": [
     "dist"
-  ]
+  ],
+  "dependencies": {
+    "some-utils-ts": "github:jniac/some-utils-ts"
+  }
 }

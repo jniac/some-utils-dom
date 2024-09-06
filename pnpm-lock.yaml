@@ -7,6 +7,10 @@ settings:
 importers:
 
   .:
+    dependencies:
+      some-utils-ts:
+        specifier: github:jniac/some-utils-ts
+        version: https://codeload.github.com/jniac/some-utils-ts/tar.gz/84200bc53127500b691f4fa35790f94c35665069
     devDependencies:
       typescript:
         specifier: ^5.5.4
@@ -14,11 +18,17 @@ importers:
 
 packages:
 
+  some-utils-ts@https://codeload.github.com/jniac/some-utils-ts/tar.gz/84200bc53127500b691f4fa35790f94c35665069:
+    resolution: {tarball: https://codeload.github.com/jniac/some-utils-ts/tar.gz/84200bc53127500b691f4fa35790f94c35665069}
+    version: 1.0.0
+
   typescript@5.5.4:
     resolution: {integrity: sha512-Mtq29sKDAEYP7aljRgtPOpTvOfbwRWlS6dPRzwjdE+C0R4brX/GUyhHSecbHMFLNBLcJIPt9nl9yG5TZ1weH+Q==}
     engines: {node: '>=14.17'}
     hasBin: true
 
 snapshots:
+
+  some-utils-ts@https://codeload.github.com/jniac/some-utils-ts/tar.gz/84200bc53127500b691f4fa35790f94c35665069: {}
 
   typescript@5.5.4: {}
