@@ -1,4 +1,4 @@
-import { applyStringMatcher } from 'some-utils-ts/string'
+import { applyStringMatcher } from 'some-utils-ts/string/match'
 import { DestroyableObject, StringMatcher } from 'some-utils-ts/types'
 
 type Info = {
