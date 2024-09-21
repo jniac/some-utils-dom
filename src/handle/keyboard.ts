@@ -82,6 +82,16 @@ function solveArgs(args: any[]): [HTMLElement, Options, KeyboardListenerEntry[]]
 }
 
 /**
+ * Reminder: 
+ * - KeyboardEvent.code:
+ *   - eg: "KeyS" 
+ *   - is the physical key value of the key represented by the event.
+ *   - layout-independent.
+ * - KeyboardEvent.key:
+ *   - eg: "s" 
+ *   - is the key value of the key represented by the event.
+ *   - Could be upper case if the key is a letter.
+ * 
  * Usage:
  * ```
  * handleKeyboard([
