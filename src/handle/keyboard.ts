@@ -56,7 +56,7 @@ type KeyboardFilterDeclaration =
   | StringMatcher
   | Partial<KeyboardFilter>
 
-function solveKeyboardFilter(filter: KeyboardFilterDeclaration): KeyboardFilter {
+function fromKeyboardFilterDeclaration(filter: KeyboardFilterDeclaration): KeyboardFilter {
   const result: KeyboardFilter = typeof filter === 'string'
     ? { ...defaultKeyboardFilter, key: filter }
     : { ...defaultKeyboardFilter, ...filter }
@@ -140,7 +140,7 @@ export function handleKeyboard(...args: any[]): DestroyableObject {
 
     for (let i = 0, max = listeners.length; i < max; i++) {
       const [filter, callback] = listeners[i]
-      const { key, keyCaseInsensitive, code, noModifiers, modifiers } = solveKeyboardFilter(filter)
+      const { key, keyCaseInsensitive, code, noModifiers, modifiers } = fromKeyboardFilterDeclaration(filter)
 
       const eventKey = keyCaseInsensitive ? event.key.toLowerCase() : event.key
       const matches = {
