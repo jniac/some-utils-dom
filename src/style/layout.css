@@ -1,0 +1,12 @@
+.layer {
+  position: absolute;
+  inset: 0;
+}
+
+.thru {
+  pointer-events: none;
+}
+
+.thru > *:not(.thru) {
+  pointer-events: auto;
+}

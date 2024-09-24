@@ -17,6 +17,9 @@
     "typescript": "^5.5.4"
   },
   "exports": {
+    "./*.css": {
+      "default": "./src/*.css"
+    },
     "./*": {
       "default": "./src/*.ts"
     }
