@@ -17,8 +17,11 @@ const defaultOptions = {
    * If `true`, the event target must be the same as the target element.
    * 
    * Useful to avoid triggering the listener when the user is typing in an input.
+   * 
+   * By default, it is `true` if the target is omitted or is `document.body`, 
+   * `false` otherwise.
    */
-  strictTarget: false,
+  strictTarget: undefined as boolean | undefined,
 }
 
 type Options = Partial<typeof defaultOptions>
@@ -128,7 +131,8 @@ export function handleKeyboard(...args: any[]): DestroyableObject {
   const [target, options, listeners] = solveArgs(args)
   const { preventDefault } = { ...defaultOptions, ...options }
   const onKeyDown = (event: KeyboardEvent): void => {
-    if (options.strictTarget && event.target !== target) {
+    const strictTarget = options.strictTarget ?? target === document.body ? true : false
+    if (strictTarget && event.target !== target) {
       return
     }
 
