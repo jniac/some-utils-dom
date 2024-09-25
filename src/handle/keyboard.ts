@@ -147,7 +147,7 @@ export function handleKeyboard(...args: any[]): DestroyableObject {
         key: applyStringMatcher(eventKey, key),
         code: applyStringMatcher(event.code, code),
         noModifiers: !noModifiers || (ctrlKey === false && altKey === false && shiftKey === false && metaKey === false),
-        modifiers: !modifiers || modifiersMatch(event, modifiers),
+        modifiers: modifiersMatch(event, modifiers),
       }
 
       const match = Object.values(matches).every(Boolean)
