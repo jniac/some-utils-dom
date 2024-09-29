@@ -1,36 +1,25 @@
+import { PointerInfoBase } from './info'
 import { PointerTarget } from './type'
 
-class TapInfo {
+class TapInfo extends PointerInfoBase {
   constructor(
     readonly timestamp: number,
     readonly tapTarget: HTMLElement | SVGElement,
     readonly downTarget: HTMLElement | SVGElement,
     readonly downPosition: DOMPoint,
     readonly orignalDownEvent: PointerEvent,
-  ) { }
+  ) {
+    super()
+    this.position = downPosition
+  }
+
+  override get button() {
+    return this.orignalDownEvent.button
+  }
 
   get localDownPosition(): DOMPoint {
-    const rect = this.tapTarget.getBoundingClientRect()
-    const { x, y } = this.downPosition
-    return new DOMPoint(
-      x - rect.x,
-      y - rect.y,
-    )
+    return this.localPosition
   }
-
-  get relativeLocalDownPosition(): DOMPoint {
-    const rect = this.tapTarget.getBoundingClientRect()
-    const { x, y } = this.downPosition
-    return new DOMPoint(
-      (x - rect.x) / rect.width,
-      (y - rect.y) / rect.height,
-    )
-  }
-
-  // Still here for compatibility.
-  get clientX() { return this.orignalDownEvent.clientX }
-  get clientY() { return this.orignalDownEvent.clientX }
-
 }
 
 type Callback = (info: TapInfo) => void

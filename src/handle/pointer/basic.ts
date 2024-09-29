@@ -1,12 +1,39 @@
+import { PointerInfoBase } from './info'
 import { PointerTarget } from './type'
 
-type BasicPointerInfo = {
-  entered: boolean
-  pressed: boolean
-  position: DOMPoint
-  downPosition: DOMPoint
-  upPosition: DOMPoint
-  event: Event
+class BasicPointerInfo extends PointerInfoBase {
+  constructor(
+    public entered: boolean = false,
+    public pressed: boolean = false,
+    public downPosition: DOMPoint = new DOMPoint(),
+    public upPosition: DOMPoint = new DOMPoint,
+    public event: Event = null!,
+  ) { super() }
+
+  get targetElement() {
+    const target = this.event!.target
+    if (target instanceof Element) {
+      return target
+    }
+    throw new Error('targetElement is not an Element')
+  }
+
+  /**
+   * [mdn](https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/button)
+   */
+  get button() {
+    return (
+      this.event instanceof MouseEvent ? this.event.button :
+        this.event instanceof PointerEvent ? this.event.button :
+          0
+    )
+  }
+
+  get localPosition(): DOMPoint {
+    const rect = this.targetElement.getBoundingClientRect()
+    const { x, y } = this.position
+    return new DOMPoint(x - rect.x, y - rect.y)
+  }
 }
 
 type Callback = (info: BasicPointerInfo) => void
@@ -70,14 +97,7 @@ function handleBasicPointer(element: PointerTarget, params: Params): () => void 
     return state.touchStarted || state.touchTimestamp > Date.now() - 1000
   }
 
-  const info: BasicPointerInfo = {
-    pressed: false,
-    entered: false,
-    position: new DOMPoint(),
-    downPosition: new DOMPoint(),
-    upPosition: new DOMPoint(),
-    event: null!,
-  }
+  const info = new BasicPointerInfo()
 
   // INFO UPDATE:
   const updateDown = (event: Event, x: number, y: number) => {

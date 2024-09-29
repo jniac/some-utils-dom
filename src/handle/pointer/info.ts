@@ -41,3 +41,31 @@ export class InfoBase {
     return Object.freeze(instance)
   }
 }
+
+/**
+ * The base class for all pointer info classes.
+ * 
+ * If the getters are implemented the class can provide the following information:
+ * - `localPosition`: The position of the pointer relative to the target element.
+ */
+export class PointerInfoBase {
+  position: DOMPoint = new DOMPoint()
+
+  get targetElement(): Element {
+    throw new Error('Not implemented')
+  }
+
+  /**
+   * The button that was pressed.
+   * [mdn](https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/button)
+   */
+  get button(): number {
+    throw new Error('Not implemented')
+  }
+
+  get localPosition(): DOMPoint {
+    const rect = this.targetElement.getBoundingClientRect()
+    const { x, y } = this.position
+    return new DOMPoint(x - rect.x, y - rect.y)
+  }
+}
