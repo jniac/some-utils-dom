@@ -1,20 +1,28 @@
 import { Ticker } from 'some-utils-ts/ticker'
+
+import { PointerInfoBase } from './info'
 import { PointerButton, PointerTarget } from './type'
 
 type Direction = 'horizontal' | 'vertical'
 
-type DragInfo = {
-  direction: Direction
-  startPosition: DOMPoint
-  position: DOMPoint
-  movement: DOMPoint
-  delta: DOMPoint
-  deltaTime: number
+class DragInfo extends PointerInfoBase {
+  direction: Direction = 'horizontal'
+  startPosition = new DOMPoint()
+  position = new DOMPoint()
+  positionOld = new DOMPoint()
+  movement = new DOMPoint()
+  delta = new DOMPoint()
+  deltaTime = 1 / 60
 
-  shiftKey: boolean
-  metaKey: boolean
-  altKey: boolean
-  ctrlKey: boolean
+  shiftKey = false
+  metaKey = false
+  altKey = false
+  ctrlKey = false
+
+  _button = 0
+  override get button() {
+    return this._button
+  }
 }
 
 type Callback = (info: DragInfo) => void
@@ -22,7 +30,10 @@ type Callback = (info: DragInfo) => void
 const defaultParams = {
   dragDistanceThreshold: 10,
   dragPreventDefault: false,
-  dragButton: PointerButton.Main,
+  /**
+   * Button mask for the drag gesture.
+   */
+  dragButton: 1 << PointerButton.Main,
   dragEaseFactor: 1,
 
   /**
@@ -78,24 +89,14 @@ function handleDrag(element: PointerTarget, params: Params): () => void {
   let dragIsLongEnough = false
   let frameID = -1
   const pointer = new DOMPoint(0, 0)
-  const startPosition = new DOMPoint(0, 0)
-  const position = new DOMPoint(0, 0)
-  const positionOld = new DOMPoint(0, 0)
-  const movement = new DOMPoint(0, 0)
-  const delta = new DOMPoint(0, 0)
-  const info: DragInfo = {
-    direction: 'horizontal',
+  const info = new DragInfo()
+  const {
     startPosition,
     position,
+    positionOld,
     movement,
     delta,
-    deltaTime: 1 / 60,
-
-    shiftKey: false,
-    metaKey: false,
-    altKey: false,
-    ctrlKey: false,
-  }
+  } = info
 
   /**
    * Using a delegate function to request the next frame, since the order has to
@@ -220,6 +221,9 @@ function handleDrag(element: PointerTarget, params: Params): () => void {
   }
 
   const onMouseDown = (event: MouseEvent) => {
+    // event.button is only available on "down" events
+    info._button = event.button
+
     if (dragButton & (1 << event.button)) {
       window.addEventListener('mousemove', onMouseMove, { passive: false })
       window.addEventListener('mouseup', onMouseUp)
