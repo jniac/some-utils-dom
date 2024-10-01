@@ -4,7 +4,9 @@
 }
 
 .thru {
-  pointer-events: none;
+  /* `!important` is necessary because of conflicts with other "thru" implementations.  */
+  /* May be removed in the future. */
+  pointer-events: none !important; 
 }
 
 /* .pointer-events-none is a tailwind class */
