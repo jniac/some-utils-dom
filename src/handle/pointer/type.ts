@@ -9,6 +9,24 @@ export enum PointerButton {
 
   // Custom
   DoubleTouch = 5,
+
+  /**
+   * Left button.
+   * @alias PointerButton.Main
+   */
+  Left = Main,
+
+  /**
+   * Middle button.
+   * @alias PointerButton.Aux
+   */
+  Middle = Aux,
+
+  /**
+   * Right button.
+   * @alias PointerButton.Second
+   */
+  Right = Second,
 }
 
 export type PointerTarget =
