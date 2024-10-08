@@ -28,6 +28,11 @@ class DragInfo extends PointerInfoBase {
 type Callback = (info: DragInfo) => void
 
 const defaultParams = {
+  /**
+   * The distance threshold in pixels before the drag gesture is recognized.
+   * 
+   * Defaults to 10.
+   */
   dragDistanceThreshold: 10,
   dragPreventDefault: false,
   /**
