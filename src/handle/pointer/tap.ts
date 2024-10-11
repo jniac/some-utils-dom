@@ -1,3 +1,4 @@
+import { Vector2Like } from 'some-utils-ts/types'
 import { PointerInfoBase } from './info'
 import { PointerTarget } from './type'
 
@@ -13,8 +14,20 @@ class TapInfo extends PointerInfoBase {
     this.position = downPosition
   }
 
+  override get targetElement() {
+    return this.tapTarget
+  }
+
   override get button() {
     return this.orignalDownEvent.button
+  }
+
+  getLocalDownPosition<T extends Vector2Like>(out?: T): T {
+    const { x, y } = this.localPosition
+    out ??= {} as T
+    out.x = x
+    out.y = y
+    return out
   }
 
   get localDownPosition(): DOMPoint {

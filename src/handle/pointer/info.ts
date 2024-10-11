@@ -1,3 +1,5 @@
+import { Vector2Like } from 'some-utils-ts/types'
+
 function cloneValue(value: any): any {
   if (typeof value !== 'object') {
     return value
@@ -63,9 +65,32 @@ export class PointerInfoBase {
     throw new Error('Not implemented')
   }
 
-  get localPosition(): DOMPoint {
+  /**
+   * Returns the position of the pointer relative to the target element.
+   */
+  getLocalPosition<T extends Vector2Like>(out?: T) {
     const rect = this.targetElement.getBoundingClientRect()
     const { x, y } = this.position
-    return new DOMPoint(x - rect.x, y - rect.y)
+    out ??= {} as T
+    out.x = x - rect.x
+    out.y = y - rect.y
+    return out
+  }
+
+  get localPosition(): DOMPoint {
+    return this.getLocalPosition(new DOMPoint())
+  }
+
+  getRelativeLocalPosition<T extends Vector2Like>(out?: T) {
+    const { x, y } = this.localPosition
+    const rect = this.targetElement.getBoundingClientRect()
+    out ??= {} as T
+    out.x = (x - rect.x) / rect.width
+    out.y = (y - rect.y) / rect.height
+    return out
+  }
+
+  get relativeLocalPosition(): DOMPoint {
+    return this.getRelativeLocalPosition(new DOMPoint())
   }
 }
