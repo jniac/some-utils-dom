@@ -16,6 +16,8 @@ class WheelInfo extends InfoBase {
   delta = new DOMPoint()
 
   phase = <EventPhase>'start'
+
+  event: WheelEvent = null!
 }
 
 type Callback = (info: WheelInfo) => void
@@ -79,6 +81,7 @@ function handleWheel(element: PointerTarget, params: Params): () => void {
     const rawDeltaTime = phase === 'start' ? 1 / 60 : time - state.time
     state.time = time
 
+    info.event = event
     info.phase = phase
     info.time = time
 
