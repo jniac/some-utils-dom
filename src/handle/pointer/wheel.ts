@@ -23,7 +23,7 @@ class WheelInfo extends InfoBase {
 type Callback = (info: WheelInfo) => void
 
 const defaultParams = {
-  preventDefault: false,
+  wheelPreventDefault: false,
 }
 
 const callbackNames = [
@@ -55,7 +55,7 @@ function getDeltaScalar(deltaMode: number): number {
 
 function handleWheel(element: PointerTarget, params: Params): () => void {
   const {
-    preventDefault,
+    wheelPreventDefault,
     onWheel,
     onWheelStart,
     onWheelEnd,
@@ -70,7 +70,7 @@ function handleWheel(element: PointerTarget, params: Params): () => void {
   const info = new WheelInfo()
 
   const _onWheel = (event: WheelEvent) => {
-    if (preventDefault)
+    if (wheelPreventDefault)
       event.preventDefault()
 
     const phase: EventPhase = state.start === false
@@ -112,7 +112,7 @@ function handleWheel(element: PointerTarget, params: Params): () => void {
     }, 100)
   }
 
-  element.addEventListener('wheel', _onWheel, { passive: !preventDefault })
+  element.addEventListener('wheel', _onWheel, { passive: !wheelPreventDefault })
 
   return () => {
     element.removeEventListener('wheel', _onWheel)
