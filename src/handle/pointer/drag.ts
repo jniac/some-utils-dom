@@ -261,7 +261,7 @@ function handleDrag(element: PointerTarget, params: Params): () => void {
 
   let firstTouch: Touch | null = null
   const onTouchStart = (event: TouchEvent) => {
-    if (dragButton & PointerButton.Main) {
+    if (dragButton & (1 << PointerButton.Main)) {
       const touch = event.changedTouches[0]
       if (firstTouch === null) {
         firstTouch = touch
