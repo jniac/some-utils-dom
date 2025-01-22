@@ -31,9 +31,15 @@ const defaultParams = {
   /**
    * The distance threshold in pixels before the drag gesture is recognized.
    * 
-   * Defaults to 10.
+   * Defaults to `10`.
    */
   dragDistanceThreshold: 10,
+  /**
+   * Whether the drag gesture should snap to the initial position if the distance threshold is not reached.
+   * 
+   * Defaults to `false`.
+   */
+  dragSnapToInitialPosition: false,
   dragPreventDefault: false,
   /**
    * Button mask for the drag gesture.
@@ -74,6 +80,7 @@ function hasDragCallback(params: Record<string, any>): boolean {
 function handleDrag(element: PointerTarget, params: Params): () => void {
   const {
     dragDistanceThreshold,
+    dragSnapToInitialPosition,
     dragPreventDefault,
     dragButton,
     dragEaseFactor,
@@ -180,10 +187,10 @@ function handleDrag(element: PointerTarget, params: Params): () => void {
   }
 
   const dragUpdate = () => {
-    if (dragIsLongEnough) {
-      updatePosition(pointer.x, pointer.y)
-    } else {
+    if (dragSnapToInitialPosition && dragIsLongEnough === false) {
       updatePosition(startPosition.x, startPosition.y)
+    } else {
+      updatePosition(pointer.x, pointer.y)
     }
 
     onDrag?.(info)
