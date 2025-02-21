@@ -10,7 +10,7 @@ importers:
     dependencies:
       some-utils-ts:
         specifier: github:jniac/some-utils-ts
-        version: https://codeload.github.com/jniac/some-utils-ts/tar.gz/84200bc53127500b691f4fa35790f94c35665069
+        version: https://codeload.github.com/jniac/some-utils-ts/tar.gz/19478d9d1660fdd6d6362d9bc9ff6423af73bb38
     devDependencies:
       typescript:
         specifier: ^5.5.4
@@ -18,8 +18,8 @@ importers:
 
 packages:
 
-  some-utils-ts@https://codeload.github.com/jniac/some-utils-ts/tar.gz/84200bc53127500b691f4fa35790f94c35665069:
-    resolution: {tarball: https://codeload.github.com/jniac/some-utils-ts/tar.gz/84200bc53127500b691f4fa35790f94c35665069}
+  some-utils-ts@https://codeload.github.com/jniac/some-utils-ts/tar.gz/19478d9d1660fdd6d6362d9bc9ff6423af73bb38:
+    resolution: {tarball: https://codeload.github.com/jniac/some-utils-ts/tar.gz/19478d9d1660fdd6d6362d9bc9ff6423af73bb38}
     version: 1.0.0
 
   typescript@5.5.4:
@@ -29,6 +29,6 @@ packages:
 
 snapshots:
 
-  some-utils-ts@https://codeload.github.com/jniac/some-utils-ts/tar.gz/84200bc53127500b691f4fa35790f94c35665069: {}
+  some-utils-ts@https://codeload.github.com/jniac/some-utils-ts/tar.gz/19478d9d1660fdd6d6362d9bc9ff6423af73bb38: {}
 
   typescript@5.5.4: {}

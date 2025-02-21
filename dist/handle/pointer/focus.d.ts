@@ -1,0 +1,11 @@
+import { PointerTarget } from './type';
+type FocusInfo = {};
+type Callback = (info: FocusInfo) => void;
+declare const defaultParams: {};
+declare const callbackNames: readonly ["onFocusEnter", "onFocusLeave"];
+type CallbackName = (typeof callbackNames)[number];
+type Params = Partial<typeof defaultParams & Record<CallbackName, Callback>>;
+declare function hasFocusCallback(params: Record<string, any>): boolean;
+declare function handleFocus(element: PointerTarget, params: Params): () => void;
+export type { FocusInfo, Params as HandleFocusParams };
+export { handleFocus, hasFocusCallback };

@@ -2,16 +2,16 @@
   "name": "some-utils-dom",
   "version": "1.0.0",
   "description": "",
-  "main": "src/index.ts",
+  "main": "",
   "scripts": {
     "dev": "tsc -w",
-    "build": "tsc"
+    "build": "tsc && node scripts/post-build.mjs"
   },
   "keywords": [],
   "author": "jniac",
   "license": "ISC",
-  "dependencies": {
-    "some-utils-ts": "workspace:*"
+  "peerDependencies": {
+    "some-utils-ts": "github:jniac/some-utils-ts"
   },
   "devDependencies": {
     "typescript": "^5.5.4"
@@ -21,10 +21,14 @@
       "default": "./src/*.css"
     },
     "./*": {
-      "default": "./src/*.ts"
+      "default": "./dist/*.js",
+      "import": "./dist/*.js",
+      "types": "./dist/*.d.ts",
+      "require": null
     }
   },
   "files": [
+    "dist",
     "src"
   ]
 }
