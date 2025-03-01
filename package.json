@@ -11,7 +11,7 @@
   "author": "jniac",
   "license": "ISC",
   "peerDependencies": {
-    "some-utils-ts": "github:jniac/some-utils-ts"
+    "some-utils-ts": "1.0.0"
   },
   "devDependencies": {
     "typescript": "^5.5.4"
