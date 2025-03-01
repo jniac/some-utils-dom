@@ -11,7 +11,7 @@
   "author": "jniac",
   "license": "ISC",
   "peerDependencies": {
-    "some-utils-ts": "1.0.0"
+    "some-utils-ts": "workspace:*"
   },
   "devDependencies": {
     "typescript": "^5.5.4"
