@@ -1,6 +1,7 @@
 import { DestroyableObject, StringMatcher } from 'some-utils-ts/types';
 type Info = {
     event: KeyboardEvent;
+    downEvent: KeyboardEvent;
     modifiers: {
         ctrl: boolean;
         alt: boolean;
@@ -35,6 +36,7 @@ declare const defaultKeyboardFilter: {
     code: StringMatcher;
     noModifiers: boolean;
     modifiers: Modifiers;
+    phase: "down" | "up";
 };
 type KeyboardFilter = typeof defaultKeyboardFilter;
 type KeyboardFilterDeclaration = StringMatcher | Partial<KeyboardFilter>;

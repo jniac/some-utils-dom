@@ -25,6 +25,7 @@ const defaultKeyboardFilter = {
     code: '*',
     noModifiers: false,
     modifiers: '',
+    phase: 'down',
 };
 function fromKeyboardFilterDeclaration(filter) {
     const result = typeof filter === 'string'
@@ -47,25 +48,39 @@ function solveArgs(args) {
 export function handleKeyboard(...args) {
     const [target, options, listeners] = solveArgs(args);
     const { preventDefault } = { ...defaultOptions, ...options };
-    const onKeyDown = (event) => {
+    let downEvent = null;
+    const onKey = (event) => {
         const strictTarget = options.strictTarget ?? target === document.body ? true : false;
         if (strictTarget && event.target !== target) {
             return;
         }
-        const { ctrlKey, altKey, shiftKey, metaKey } = event;
+        if (event.type === 'keydown')
+            downEvent = event;
+        const { ctrlKey, altKey, shiftKey, metaKey } = downEvent; // Always use "downEvent" because "keyup" should not use modifiers.
         const info = {
             event,
+            downEvent: downEvent,
             modifiers: { ctrl: ctrlKey, alt: altKey, shift: shiftKey, meta: metaKey },
         };
         for (let i = 0, max = listeners.length; i < max; i++) {
             const [filter, callback] = listeners[i];
-            const { key, keyCaseInsensitive, code, noModifiers, modifiers } = fromKeyboardFilterDeclaration(filter);
+            const { key, keyCaseInsensitive, code, noModifiers, modifiers, phase = 'down' } = fromKeyboardFilterDeclaration(filter);
+            switch (event.type) {
+                case 'keydown':
+                    if (phase !== 'down')
+                        continue;
+                    break;
+                case 'keyup':
+                    if (phase !== 'up')
+                        continue;
+                    break;
+            }
             const eventKey = keyCaseInsensitive ? event.key.toLowerCase() : event.key;
             const matches = {
                 key: applyStringMatcher(eventKey, key),
                 code: applyStringMatcher(event.code, code),
                 noModifiers: !noModifiers || (ctrlKey === false && altKey === false && shiftKey === false && metaKey === false),
-                modifiers: modifiersMatch(event, modifiers),
+                modifiers: modifiersMatch(downEvent, modifiers),
             };
             const match = Object.values(matches).every(Boolean);
             if (match) {
@@ -76,9 +91,11 @@ export function handleKeyboard(...args) {
             }
         }
     };
-    target.addEventListener('keydown', onKeyDown, { passive: false });
+    target.addEventListener('keydown', onKey, { passive: false });
+    target.addEventListener('keyup', onKey, { passive: false });
     const destroy = () => {
-        target.removeEventListener('keydown', onKeyDown);
+        target.removeEventListener('keydown', onKey);
+        target.removeEventListener('keyup', onKey);
     };
     return { destroy };
 }

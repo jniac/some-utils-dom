@@ -3,6 +3,7 @@ import { DestroyableObject, StringMatcher } from 'some-utils-ts/types'
 
 type Info = {
   event: KeyboardEvent
+  downEvent: KeyboardEvent
   modifiers: {
     ctrl: boolean
     alt: boolean
@@ -51,6 +52,7 @@ const defaultKeyboardFilter = {
   code: '*' as StringMatcher,
   noModifiers: false,
   modifiers: '' as Modifiers,
+  phase: 'down' as 'down' | 'up',
 }
 
 type KeyboardFilter = typeof defaultKeyboardFilter
@@ -130,28 +132,44 @@ export function handleKeyboard(target: HTMLElement, options: Options, listeners:
 export function handleKeyboard(...args: any[]): DestroyableObject {
   const [target, options, listeners] = solveArgs(args)
   const { preventDefault } = { ...defaultOptions, ...options }
-  const onKeyDown = (event: KeyboardEvent): void => {
+  let downEvent: KeyboardEvent | null = null
+  const onKey = (event: KeyboardEvent): void => {
     const strictTarget = options.strictTarget ?? target === document.body ? true : false
     if (strictTarget && event.target !== target) {
       return
     }
 
-    const { ctrlKey, altKey, shiftKey, metaKey } = event
+    if (event.type === 'keydown')
+      downEvent = event
+
+    const { ctrlKey, altKey, shiftKey, metaKey } = downEvent! // Always use "downEvent" because "keyup" should not use modifiers.
     const info: Info = {
       event,
+      downEvent: downEvent!,
       modifiers: { ctrl: ctrlKey, alt: altKey, shift: shiftKey, meta: metaKey },
     }
 
     for (let i = 0, max = listeners.length; i < max; i++) {
       const [filter, callback] = listeners[i]
-      const { key, keyCaseInsensitive, code, noModifiers, modifiers } = fromKeyboardFilterDeclaration(filter)
+      const { key, keyCaseInsensitive, code, noModifiers, modifiers, phase = 'down' } = fromKeyboardFilterDeclaration(filter)
+
+      switch (event.type) {
+        case 'keydown':
+          if (phase !== 'down')
+            continue
+          break
+        case 'keyup':
+          if (phase !== 'up')
+            continue
+          break
+      }
 
       const eventKey = keyCaseInsensitive ? event.key.toLowerCase() : event.key
       const matches = {
         key: applyStringMatcher(eventKey, key),
         code: applyStringMatcher(event.code, code),
         noModifiers: !noModifiers || (ctrlKey === false && altKey === false && shiftKey === false && metaKey === false),
-        modifiers: modifiersMatch(event, modifiers),
+        modifiers: modifiersMatch(downEvent!, modifiers),
       }
 
       const match = Object.values(matches).every(Boolean)
@@ -164,10 +182,12 @@ export function handleKeyboard(...args: any[]): DestroyableObject {
     }
   }
 
-  target.addEventListener('keydown', onKeyDown, { passive: false })
+  target.addEventListener('keydown', onKey, { passive: false })
+  target.addEventListener('keyup', onKey, { passive: false })
 
   const destroy = () => {
-    target.removeEventListener('keydown', onKeyDown)
+    target.removeEventListener('keydown', onKey)
+    target.removeEventListener('keyup', onKey)
   }
 
   return { destroy }
