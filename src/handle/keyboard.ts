@@ -2,8 +2,9 @@ import { applyStringMatcher } from 'some-utils-ts/string/match'
 import { DestroyableObject, StringMatcher } from 'some-utils-ts/types'
 
 type Info = {
+  id: number
   event: KeyboardEvent
-  downEvent: KeyboardEvent
+  downEvent: KeyboardEvent | null
   modifiers: {
     ctrl: boolean
     alt: boolean
@@ -86,6 +87,8 @@ function solveArgs(args: any[]): [HTMLElement, Options, KeyboardListenerEntry[]]
   return args as any
 }
 
+let nextId = 0
+
 /**
  * Reminder: 
  * - KeyboardEvent.code:
@@ -130,6 +133,7 @@ export function handleKeyboard(listeners: KeyboardListenerEntry[]): DestroyableO
 export function handleKeyboard(target: HTMLElement, listeners: KeyboardListenerEntry[]): DestroyableObject
 export function handleKeyboard(target: HTMLElement, options: Options, listeners: KeyboardListenerEntry[]): DestroyableObject
 export function handleKeyboard(...args: any[]): DestroyableObject {
+  const id = nextId++
   const [target, options, listeners] = solveArgs(args)
   const { preventDefault } = { ...defaultOptions, ...options }
   let downEvent: KeyboardEvent | null = null
@@ -142,10 +146,11 @@ export function handleKeyboard(...args: any[]): DestroyableObject {
     if (event.type === 'keydown')
       downEvent = event
 
-    const { ctrlKey, altKey, shiftKey, metaKey } = downEvent! // Always use "downEvent" because "keyup" should not use modifiers.
+    const { ctrlKey = false, altKey = false, shiftKey = false, metaKey = false } = downEvent ?? {} // Always use "downEvent" because "keyup" should not use modifiers.
     const info: Info = {
+      id,
       event,
-      downEvent: downEvent!,
+      downEvent,
       modifiers: { ctrl: ctrlKey, alt: altKey, shift: shiftKey, meta: metaKey },
     }
 

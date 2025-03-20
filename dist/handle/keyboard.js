@@ -45,7 +45,9 @@ function solveArgs(args) {
     }
     return args;
 }
+let nextId = 0;
 export function handleKeyboard(...args) {
+    const id = nextId++;
     const [target, options, listeners] = solveArgs(args);
     const { preventDefault } = { ...defaultOptions, ...options };
     let downEvent = null;
@@ -56,10 +58,11 @@ export function handleKeyboard(...args) {
         }
         if (event.type === 'keydown')
             downEvent = event;
-        const { ctrlKey, altKey, shiftKey, metaKey } = downEvent; // Always use "downEvent" because "keyup" should not use modifiers.
+        const { ctrlKey = false, altKey = false, shiftKey = false, metaKey = false } = downEvent ?? {}; // Always use "downEvent" because "keyup" should not use modifiers.
         const info = {
+            id,
             event,
-            downEvent: downEvent,
+            downEvent,
             modifiers: { ctrl: ctrlKey, alt: altKey, shift: shiftKey, meta: metaKey },
         };
         for (let i = 0, max = listeners.length; i < max; i++) {

@@ -1,7 +1,8 @@
 import { DestroyableObject, StringMatcher } from 'some-utils-ts/types';
 type Info = {
+    id: number;
     event: KeyboardEvent;
-    downEvent: KeyboardEvent;
+    downEvent: KeyboardEvent | null;
     modifiers: {
         ctrl: boolean;
         alt: boolean;
