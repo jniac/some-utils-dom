@@ -13,9 +13,13 @@ class DragInfo extends PointerInfoBase {
     metaKey = false;
     altKey = false;
     ctrlKey = false;
+    downTargetElement = null;
     _button = 0;
     get button() {
         return this._button;
+    }
+    get targetElement() {
+        return this.downTargetElement;
     }
 }
 const defaultParams = {
@@ -181,6 +185,7 @@ function handleDrag(element, params) {
     const onMouseDown = (event) => {
         // event.button is only available on "down" events
         info._button = event.button;
+        info.downTargetElement = event.target;
         if (dragButton & (1 << event.button)) {
             window.addEventListener('mousemove', onMouseMove, { passive: false });
             window.addEventListener('mouseup', onMouseUp);
@@ -216,6 +221,7 @@ function handleDrag(element, params) {
                 window.addEventListener('touchend', onTouchEnd);
                 requestDragFrame();
                 down = true;
+                info.downTargetElement = event.target;
                 delta.x = 0;
                 delta.y = 0;
                 movement.x = 0;

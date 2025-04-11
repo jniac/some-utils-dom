@@ -13,8 +13,10 @@ declare class DragInfo extends PointerInfoBase {
     metaKey: boolean;
     altKey: boolean;
     ctrlKey: boolean;
+    downTargetElement: Element;
     _button: number;
     get button(): number;
+    get targetElement(): Element;
 }
 type Callback = (info: DragInfo) => void;
 declare const defaultParams: {
