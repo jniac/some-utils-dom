@@ -5,6 +5,7 @@ class TapInfo extends PointerInfoBase {
     downTarget;
     downPosition;
     orignalDownEvent;
+    originalUpEvent = null;
     constructor(timestamp, tapTarget, downTarget, downPosition, orignalDownEvent) {
         super();
         this.timestamp = timestamp;
@@ -57,7 +58,11 @@ function handleTap(element, params) {
         const y = event.clientY - info.downPosition.y;
         const distance = Math.sqrt(x * x + y * y);
         if (distance <= maxDistance && duration < maxDuration) {
-            onTap?.(info);
+            info.originalUpEvent = event;
+            // Call the callback in the next frame to avoid collision with other events (native eg: 'click', or custom)
+            window.requestAnimationFrame(() => {
+                onTap?.(info);
+            });
         }
     };
     element.addEventListener('pointerdown', onPointerDown);

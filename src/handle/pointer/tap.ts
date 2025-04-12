@@ -3,6 +3,8 @@ import { PointerInfoBase } from './info'
 import { PointerTarget } from './type'
 
 class TapInfo extends PointerInfoBase {
+  originalUpEvent: PointerEvent = null!
+
   constructor(
     readonly timestamp: number,
     readonly tapTarget: HTMLElement | SVGElement,
@@ -82,7 +84,11 @@ function handleTap(element: PointerTarget, params: Params): () => void {
     const y = event.clientY - info.downPosition.y
     const distance = Math.sqrt(x * x + y * y)
     if (distance <= maxDistance && duration < maxDuration) {
-      onTap?.(info)
+      info.originalUpEvent = event
+      // Call the callback in the next frame to avoid collision with other events (native eg: 'click', or custom)
+      window.requestAnimationFrame(() => {
+        onTap?.(info)
+      })
     }
   }
 

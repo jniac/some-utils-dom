@@ -7,6 +7,7 @@ declare class TapInfo extends PointerInfoBase {
     readonly downTarget: HTMLElement | SVGElement;
     readonly downPosition: DOMPoint;
     readonly orignalDownEvent: PointerEvent;
+    originalUpEvent: PointerEvent;
     constructor(timestamp: number, tapTarget: HTMLElement | SVGElement, downTarget: HTMLElement | SVGElement, downPosition: DOMPoint, orignalDownEvent: PointerEvent);
     get targetElement(): HTMLElement | SVGElement;
     get button(): number;
