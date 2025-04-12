@@ -1,4 +1,5 @@
 import { Vector2Like } from 'some-utils-ts/types'
+import { isAncestorOf } from '../../utils/tree'
 import { PointerInfoBase } from './info'
 import { PointerTarget } from './type'
 
@@ -79,16 +80,20 @@ function handleTap(element: PointerTarget, params: Params): () => void {
   }
   const onPointerUp = (event: PointerEvent) => {
     window.removeEventListener('pointerup', onPointerUp)
-    const duration = (Date.now() - info.timestamp) / 1e3
-    const x = event.clientX - info.downPosition.x
-    const y = event.clientY - info.downPosition.y
-    const distance = Math.sqrt(x * x + y * y)
-    if (distance <= maxDistance && duration < maxDuration) {
-      info.originalUpEvent = event
-      // Call the callback in the next frame to avoid collision with other events (native eg: 'click', or custom)
-      window.requestAnimationFrame(() => {
-        onTap?.(info)
-      })
+    if (isAncestorOf(info.downTarget, event.target as HTMLElement)) {
+      const duration = (Date.now() - info.timestamp) / 1e3
+      if (duration <= maxDuration) {
+        const x = event.clientX - info.downPosition.x
+        const y = event.clientY - info.downPosition.y
+        const distance = Math.hypot(x, y)
+        if (distance <= maxDistance) {
+          info.originalUpEvent = event
+          // Call the callback in the next frame to avoid collision with other events (native eg: 'click', or custom)
+          window.requestAnimationFrame(() => {
+            onTap?.(info)
+          })
+        }
+      }
     }
   }
 
