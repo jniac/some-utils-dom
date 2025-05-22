@@ -22,10 +22,9 @@
       "default": "./src/*.css"
     },
     "./*": {
-      "default": "./dist/*.js",
       "import": "./dist/*.js",
       "types": "./dist/*.d.ts",
-      "require": null
+      "default": "./dist/*.js"
     }
   },
   "files": [
