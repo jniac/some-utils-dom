@@ -32,11 +32,34 @@ type Modifiers = '' | Combination<Modifier> | ((modifiers: {
     meta: boolean;
 }) => boolean);
 declare const defaultKeyboardFilter: {
+    /**
+     * eg: "s" or "S"
+     *
+     * If `keyCaseInsensitive` is `true`, it will be converted to lower case.
+     */
     key: StringMatcher;
+    /**
+     * If `true`, the key will be converted to lower case.
+     */
     keyCaseInsensitive: boolean;
+    /**
+     * eg: "KeyS", "Space" or "Enter"
+     */
     code: StringMatcher;
+    /**
+     * If `true`, the event will match only if no modifiers are pressed.
+     */
     noModifiers: boolean;
+    /**
+     * eg: "ctrl", "alt", "shift", "meta", "ctrl+shift", "alt+meta", etc.
+     */
     modifiers: Modifiers;
+    /**
+     * The phase of the event to match.
+     *
+     * - 'down': matches on `keydown` events.
+     * - 'up': matches on `keyup` events.
+     */
     phase: "down" | "up";
 };
 type KeyboardFilter = typeof defaultKeyboardFilter;
@@ -48,7 +71,7 @@ type KeyboardListenerEntry = [
 /**
  * Reminder:
  * - KeyboardEvent.code:
- *   - eg: "KeyS"
+ *   - eg: "KeyS", "Space" or "Enter"
  *   - is the physical key value of the key represented by the event.
  *   - layout-independent.
  * - KeyboardEvent.key:

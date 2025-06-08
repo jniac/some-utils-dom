@@ -20,11 +20,34 @@ function modifiersMatch(event, modifiers) {
     return ctrl === ctrlKey && alt === altKey && shift === shiftKey && meta === metaKey;
 }
 const defaultKeyboardFilter = {
+    /**
+     * eg: "s" or "S"
+     *
+     * If `keyCaseInsensitive` is `true`, it will be converted to lower case.
+     */
     key: '*',
+    /**
+     * If `true`, the key will be converted to lower case.
+     */
     keyCaseInsensitive: true,
+    /**
+     * eg: "KeyS", "Space" or "Enter"
+     */
     code: '*',
+    /**
+     * If `true`, the event will match only if no modifiers are pressed.
+     */
     noModifiers: false,
+    /**
+     * eg: "ctrl", "alt", "shift", "meta", "ctrl+shift", "alt+meta", etc.
+     */
     modifiers: '',
+    /**
+     * The phase of the event to match.
+     *
+     * - 'down': matches on `keydown` events.
+     * - 'up': matches on `keyup` events.
+     */
     phase: 'down',
 };
 function fromKeyboardFilterDeclaration(filter) {

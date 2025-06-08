@@ -48,11 +48,34 @@ function modifiersMatch(event: KeyboardEvent, modifiers: Modifiers): boolean {
 }
 
 const defaultKeyboardFilter = {
+  /**
+   * eg: "s" or "S"
+   * 
+   * If `keyCaseInsensitive` is `true`, it will be converted to lower case.
+   */
   key: '*' as StringMatcher,
+  /**
+   * If `true`, the key will be converted to lower case.
+   */
   keyCaseInsensitive: true,
+  /**
+   * eg: "KeyS", "Space" or "Enter"
+   */
   code: '*' as StringMatcher,
+  /**
+   * If `true`, the event will match only if no modifiers are pressed.
+   */
   noModifiers: false,
+  /**
+   * eg: "ctrl", "alt", "shift", "meta", "ctrl+shift", "alt+meta", etc.
+   */
   modifiers: '' as Modifiers,
+  /**
+   * The phase of the event to match.
+   * 
+   * - 'down': matches on `keydown` events.
+   * - 'up': matches on `keyup` events.
+   */
   phase: 'down' as 'down' | 'up',
 }
 
@@ -92,7 +115,7 @@ let nextId = 0
 /**
  * Reminder: 
  * - KeyboardEvent.code:
- *   - eg: "KeyS" 
+ *   - eg: "KeyS", "Space" or "Enter"
  *   - is the physical key value of the key represented by the event.
  *   - layout-independent.
  * - KeyboardEvent.key:
