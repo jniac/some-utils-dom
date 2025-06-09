@@ -8,7 +8,12 @@ const init = lazy(() => {
     const resizeObserverMap = new WeakMap();
     const resizeObserver = new ResizeObserver(entries => {
         for (const entry of entries) {
-            resizeObserverMap.get(entry.target)?.(entry);
+            const callbacks = resizeObserverMap.get(entry.target);
+            if (callbacks) {
+                for (const callback of callbacks) {
+                    callback(entry);
+                }
+            }
         }
     });
     return {
@@ -22,6 +27,12 @@ class Info {
     constructor(element, size) {
         this.element = element;
         this.size = size;
+    }
+    get width() {
+        return this.size.x;
+    }
+    get height() {
+        return this.size.y;
     }
     get aspect() {
         return this.size.x / this.size.y;
@@ -56,12 +67,24 @@ export function handleSize(element, params) {
     else {
         const { resizeObserver, resizeObserverMap, } = init();
         resizeObserver.observe(element);
-        resizeObserverMap.set(element, (entry) => {
+        const callbacks = resizeObserverMap.get(element) ?? new Set();
+        const callback = (entry) => {
             size.x = entry.contentRect.width;
             size.y = entry.contentRect.height;
             onSize(new Info(element, size));
-        });
-        const destroy = () => resizeObserver.unobserve(element);
+        };
+        resizeObserverMap.set(element, callbacks);
+        callbacks.add(callback);
+        const destroy = () => {
+            const callbacks = resizeObserverMap.get(element);
+            if (!callbacks)
+                throw new Error('Wtf??? No callbacks found for element');
+            callbacks.delete(callback);
+            if (callbacks.size === 0) {
+                resizeObserverMap.delete(element);
+                resizeObserver.unobserve(element);
+            }
+        };
         return { destroy };
     }
 }
