@@ -1,6 +1,7 @@
 import { HandleBasicPointerParams, handleBasicPointer, hasBasicPointerCallback } from './pointer/basic'
 import { HandleDragParams, handleDrag, hasDragCallback } from './pointer/drag'
 import { HandleFocusParams, handleFocus, hasFocusCallback } from './pointer/focus'
+import { HandleOutsideParams, handleOutside, hasOutsideCallback } from './pointer/outside'
 import { HandlePressParams, handlePress, hasPressCallback } from './pointer/press'
 import { HandleTapParams, handleTap, hasTapCallback } from './pointer/tap'
 import { PointerTarget } from './pointer/type'
@@ -15,33 +16,36 @@ type Params =
   & HandleTapParams
   & HandleWheelParams
   & HandleWheelFrameParams
+  & HandleOutsideParams
 
 export function handlePointer(target: PointerTarget | PointerTarget[] | NodeListOf<PointerTarget>, params: Params): () => void {
   const destroyCallbacks: (() => void)[] = []
 
   const targets = 'length' in target ? Array.from(target) : [target]
   for (const target of targets) {
-    if (hasBasicPointerCallback(params)) {
+    if (hasBasicPointerCallback(params))
       destroyCallbacks.push(handleBasicPointer(target, params))
-    }
-    if (hasDragCallback(params)) {
+
+    if (hasDragCallback(params))
       destroyCallbacks.push(handleDrag(target, params))
-    }
-    if (hasFocusCallback(params)) {
+
+    if (hasFocusCallback(params))
       destroyCallbacks.push(handleFocus(target, params))
-    }
-    if (hasPressCallback(params)) {
+
+    if (hasPressCallback(params))
       destroyCallbacks.push(handlePress(target, params))
-    }
-    if (hasTapCallback(params)) {
+
+    if (hasTapCallback(params))
       destroyCallbacks.push(handleTap(target, params))
-    }
-    if (hasWheelCallback(params)) {
+
+    if (hasWheelCallback(params))
       destroyCallbacks.push(handleWheel(target, params))
-    }
-    if (hasWheelFrameCallback(params)) {
+
+    if (hasWheelFrameCallback(params))
       destroyCallbacks.push(handleWheelFrame(target, params))
-    }
+
+    if (hasOutsideCallback(params))
+      destroyCallbacks.push(handleOutside(target, params))
   }
 
   return () => {

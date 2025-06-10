@@ -111,6 +111,7 @@ export type {
 }
 
 export {
-  handleTap, hasTapCallback
+  handleTap,
+  hasTapCallback
 }
 
