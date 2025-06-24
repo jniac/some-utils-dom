@@ -13,6 +13,13 @@ declare class DragInfo extends PointerInfoBase {
     metaKey: boolean;
     altKey: boolean;
     ctrlKey: boolean;
+    /**
+     * The number of touches currently on the screen.
+     *
+     * Note:
+     * - Value is `0` when the pointer is a mouse pointer.
+     */
+    touchCount: number;
     downTargetElement: Element;
     _button: number;
     get button(): number;

@@ -13,6 +13,13 @@ class DragInfo extends PointerInfoBase {
     metaKey = false;
     altKey = false;
     ctrlKey = false;
+    /**
+     * The number of touches currently on the screen.
+     *
+     * Note:
+     * - Value is `0` when the pointer is a mouse pointer.
+     */
+    touchCount = 0;
     downTargetElement = null;
     _button = 0;
     get button() {
@@ -213,6 +220,7 @@ function handleDrag(element, params) {
     };
     let firstTouch = null;
     const onTouchStart = (event) => {
+        info.touchCount = event.touches.length;
         if (dragButton & (1 << PointerButton.Main)) {
             const touch = event.changedTouches[0];
             if (firstTouch === null) {
@@ -237,6 +245,7 @@ function handleDrag(element, params) {
     };
     const onTouchMove = (event) => {
         const touch = event.changedTouches[0];
+        info.touchCount = event.touches.length;
         if (touch.identifier === firstTouch.identifier) {
             pointer.x = touch.clientX;
             pointer.y = touch.clientY;
@@ -251,6 +260,7 @@ function handleDrag(element, params) {
     };
     const onTouchEnd = (event) => {
         const touch = event.changedTouches[0];
+        info.touchCount = event.touches.length;
         if (touch.identifier === firstTouch.identifier) {
             window.removeEventListener('touchmove', onTouchMove);
             window.removeEventListener('touchend', onTouchEnd);
