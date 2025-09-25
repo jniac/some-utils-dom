@@ -63,7 +63,7 @@ declare const defaultKeyboardFilter: {
     phase: "down" | "up";
 };
 type KeyboardFilter = typeof defaultKeyboardFilter;
-type KeyboardFilterDeclaration = StringMatcher | Partial<KeyboardFilter>;
+export type KeyboardFilterDeclaration = StringMatcher | Partial<KeyboardFilter>;
 type KeyboardListenerEntry = [
     filter: KeyboardFilterDeclaration,
     callback: (info: Info) => void

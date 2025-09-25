@@ -81,7 +81,7 @@ const defaultKeyboardFilter = {
 
 type KeyboardFilter = typeof defaultKeyboardFilter
 
-type KeyboardFilterDeclaration =
+export type KeyboardFilterDeclaration =
   | StringMatcher
   | Partial<KeyboardFilter>
 
