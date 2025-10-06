@@ -2,10 +2,10 @@
   "name": "some-utils-dom",
   "version": "1.0.0",
   "description": "",
-  "main": "",
+  "repository": "https://github.com/jniac/some-utils-three",
   "scripts": {
     "dev": "tsc-watch --onSuccess \"node scripts/post-build.mjs\"",
-    "build": "tsc && node scripts/post-build.mjs"
+    "build": "rimraf dist && tsc && node scripts/post-build.mjs"
   },
   "keywords": [],
   "author": "jniac",
@@ -14,6 +14,7 @@
     "some-utils-ts": "workspace:*"
   },
   "devDependencies": {
+    "rimraf": "^6.0.1",
     "tsc-watch": "^6.2.1",
     "typescript": "^5.5.4"
   },
