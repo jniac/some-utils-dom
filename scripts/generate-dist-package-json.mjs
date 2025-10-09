@@ -5,6 +5,10 @@ async function getSomeUtilsVersion() {
   return '1.0.0' // Placeholder for actual version retrieval logic
 }
 
+/**
+ * Replace pnpm workspace references with actual versions.
+ * @param {object} scope 
+ */
 async function replacePnpmWorkspaceReferences(scope) {
   for (const key of Object.keys(scope)) {
     const value = scope[key]
@@ -96,8 +100,10 @@ export async function generateDistPackage(distDir, {
 const isMain = import.meta.url === `file://${process.argv[1]}`
 
 if (isMain) {
-  const distDir = path.join(import.meta.dirname, '..', 'dist')
-  const dryRun = process.argv.includes('--dry-run')
+  const { program } = await import('./program.mjs')
+  const { dir, dryRun } = program.parse().opts()
+  const distDir = path.join(import.meta.dirname, '..', dir)
+
   generateDistPackage(distDir, { dryRun })
     .catch(err => {
       console.error(err)
