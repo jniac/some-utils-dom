@@ -6,7 +6,18 @@ type PressInfo = {
   delta: DOMPoint
   target: PointerTarget
   targetRectOnDown: Rectangle
+  /**
+   * Whether the pointer is still inside the target element's rect since the press started. 
+   * 
+   * Notes:
+   * - This is based on the rect at the time of the press start, so it won't update 
+   * if the element moves or resizes during the press.
+   */
   pointerIsInside: boolean
+  /**
+   * Duration of the press in seconds.
+   */
+  pressDuration: number
 }
 
 type Callback = (info: PressInfo) => void
@@ -34,6 +45,7 @@ function handlePress(element: PointerTarget, params: Params) {
 
   let dragged = false
   let frameID = -1
+  let downTime = 0
   const pointer = new DOMPoint(0, 0)
   const position = new DOMPoint(0, 0)
   const delta = new DOMPoint(0, 0)
@@ -45,6 +57,7 @@ function handlePress(element: PointerTarget, params: Params) {
     get pointerIsInside() {
       return info.targetRectOnDown.contains(pointer.x, pointer.y)
     },
+    pressDuration: 0,
   }
 
   const dragFrame = () => {
@@ -58,19 +71,33 @@ function handlePress(element: PointerTarget, params: Params) {
     }
   }
 
+  const start = (x: number, y: number) => {
+    dragged = true
+    downTime = window.performance.now()
+    info.targetRectOnDown.copy(element.getBoundingClientRect())
+    delta.x = 0
+    delta.y = 0
+    position.x = x
+    position.y = y
+    pointer.x = x
+    pointer.y = y
+    info.pressDuration = 0
+    onPressStart?.(info)
+  }
+
+  const stop = () => {
+    dragged = false
+    info.pressDuration = (window.performance.now() - downTime) / 1000
+    onPressStop?.(info)
+  }
+
   const onMouseDown = (event: MouseEvent) => {
     window.addEventListener('mousemove', onMouseMove)
     window.addEventListener('mouseup', onMouseUp)
     frameID = window.requestAnimationFrame(dragFrame)
     dragged = true
     info.targetRectOnDown.copy(element.getBoundingClientRect())
-    delta.x = 0
-    delta.y = 0
-    position.x = event.clientX
-    position.y = event.clientY
-    pointer.x = event.clientX
-    pointer.y = event.clientY
-    onPressStart?.(info)
+    start(event.clientX, event.clientY)
   }
 
   const onMouseMove = (event: MouseEvent) => {
@@ -81,8 +108,7 @@ function handlePress(element: PointerTarget, params: Params) {
   const onMouseUp = () => {
     window.removeEventListener('mousemove', onMouseMove)
     window.removeEventListener('mouseup', onMouseUp)
-    dragged = false
-    onPressStop?.(info)
+    stop()
   }
 
   const onTouchStart = (event: TouchEvent) => {
@@ -92,15 +118,7 @@ function handlePress(element: PointerTarget, params: Params) {
       window.addEventListener('touchmove', onTouchMove)
       window.addEventListener('touchend', onTouchEnd)
       frameID = window.requestAnimationFrame(dragFrame)
-      dragged = true
-      info.targetRectOnDown.copy(element.getBoundingClientRect())
-      delta.x = 0
-      delta.y = 0
-      position.x = touch.clientX
-      position.y = touch.clientY
-      pointer.x = touch.clientX
-      pointer.y = touch.clientY
-      onPressStart?.(info)
+      start(touch.clientX, touch.clientY)
     }
   }
 
@@ -115,8 +133,7 @@ function handlePress(element: PointerTarget, params: Params) {
   const onTouchEnd = (event: TouchEvent) => {
     window.removeEventListener('touchmove', onTouchMove)
     window.removeEventListener('touchend', onTouchEnd)
-    dragged = false
-    onPressStop?.(info)
+    stop()
   }
 
   element.addEventListener('mousedown', onMouseDown, { passive: false })
