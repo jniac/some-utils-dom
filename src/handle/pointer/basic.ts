@@ -1,14 +1,20 @@
 import { PointerInfoBase } from './info'
 import { PointerTarget } from './type'
+import { EventModifiers } from './utils'
 
 class BasicPointerInfo extends PointerInfoBase {
+  modifiers: EventModifiers
+
   constructor(
     public entered: boolean = false,
     public pressed: boolean = false,
     public downPosition: DOMPoint = new DOMPoint(),
     public upPosition: DOMPoint = new DOMPoint,
     public event: Event = null!,
-  ) { super() }
+  ) {
+    super()
+    this.modifiers = new EventModifiers(this.event)
+  }
 
   get targetElement() {
     const target = this.event!.target
@@ -236,6 +242,7 @@ export type {
 }
 
 export {
+  EventModifiers,
   handleBasicPointer,
   hasBasicPointerCallback
 }

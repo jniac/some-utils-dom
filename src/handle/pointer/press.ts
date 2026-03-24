@@ -1,11 +1,18 @@
 import { Rectangle } from 'some-utils-ts/math/geom/rectangle'
-import { PointerTarget } from './type'
 
-type PressInfo = {
-  position: DOMPoint
-  delta: DOMPoint
-  target: PointerTarget
-  targetRectOnDown: Rectangle
+import { PointerTarget } from './type'
+import { EventModifiers } from './utils'
+
+class PressInfo {
+  targetRectOnDown: Rectangle = new Rectangle()
+
+  /**
+   * Duration of the press in seconds.
+   */
+  pressDuration = 0
+
+  modifiers: EventModifiers = null!
+
   /**
    * Whether the pointer is still inside the target element's rect since the press started. 
    * 
@@ -13,11 +20,15 @@ type PressInfo = {
    * - This is based on the rect at the time of the press start, so it won't update 
    * if the element moves or resizes during the press.
    */
-  pointerIsInside: boolean
-  /**
-   * Duration of the press in seconds.
-   */
-  pressDuration: number
+  get pointerIsInside() {
+    return this.targetRectOnDown.contains(this.position.x, this.position.y)
+  }
+
+  constructor(
+    public position: DOMPoint,
+    public delta: DOMPoint,
+    public target: PointerTarget,
+  ) { }
 }
 
 type Callback = (info: PressInfo) => void
@@ -49,16 +60,7 @@ function handlePress(element: PointerTarget, params: Params) {
   const pointer = new DOMPoint(0, 0)
   const position = new DOMPoint(0, 0)
   const delta = new DOMPoint(0, 0)
-  const info: PressInfo = {
-    position,
-    delta,
-    target: element,
-    targetRectOnDown: new Rectangle(),
-    get pointerIsInside() {
-      return info.targetRectOnDown.contains(pointer.x, pointer.y)
-    },
-    pressDuration: 0,
-  }
+  const info = new PressInfo(position, delta, element)
 
   const dragFrame = () => {
     if (dragged) {
@@ -67,11 +69,12 @@ function handlePress(element: PointerTarget, params: Params) {
       delta.y = pointer.y - position.y
       position.x += delta.x
       position.y += delta.y
+      info.pressDuration = (window.performance.now() - downTime) / 1000
       onPressFrame?.(info)
     }
   }
 
-  const start = (x: number, y: number) => {
+  const start = (event: Event, x: number, y: number) => {
     dragged = true
     downTime = window.performance.now()
     info.targetRectOnDown.copy(element.getBoundingClientRect())
@@ -81,6 +84,7 @@ function handlePress(element: PointerTarget, params: Params) {
     position.y = y
     pointer.x = x
     pointer.y = y
+    info.modifiers = new EventModifiers(event)
     info.pressDuration = 0
     onPressStart?.(info)
   }
@@ -97,7 +101,7 @@ function handlePress(element: PointerTarget, params: Params) {
     frameID = window.requestAnimationFrame(dragFrame)
     dragged = true
     info.targetRectOnDown.copy(element.getBoundingClientRect())
-    start(event.clientX, event.clientY)
+    start(event, event.clientX, event.clientY)
   }
 
   const onMouseMove = (event: MouseEvent) => {
@@ -118,7 +122,7 @@ function handlePress(element: PointerTarget, params: Params) {
       window.addEventListener('touchmove', onTouchMove)
       window.addEventListener('touchend', onTouchEnd)
       frameID = window.requestAnimationFrame(dragFrame)
-      start(touch.clientX, touch.clientY)
+      start(event, touch.clientX, touch.clientY)
     }
   }
 
