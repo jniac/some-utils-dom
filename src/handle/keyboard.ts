@@ -68,8 +68,11 @@ const defaultKeyboardFilter = {
   noModifiers: false,
   /**
    * eg: "ctrl", "alt", "shift", "meta", "ctrl+shift", "alt+meta", etc.
+   * 
+   * Notes:
+   * - '*' matches any combination of modifiers.
    */
-  modifiers: '' as Modifiers,
+  modifiers: '' as Modifiers | '*',
   /**
    * The phase of the event to match.
    * 
@@ -197,7 +200,7 @@ export function handleKeyboard(...args: any[]): DestroyableObject {
         key: applyStringMatcher(eventKey, key),
         code: applyStringMatcher(event.code, code),
         noModifiers: !noModifiers || (ctrlKey === false && altKey === false && shiftKey === false && metaKey === false),
-        modifiers: modifiersMatch(downEvent!, modifiers),
+        modifiers: modifiers === '*' || modifiersMatch(downEvent!, modifiers),
       }
 
       const match = Object.values(matches).every(Boolean)
