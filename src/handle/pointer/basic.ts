@@ -3,18 +3,12 @@ import { PointerTarget } from './type'
 import { EventModifiers } from './utils'
 
 class BasicPointerInfo extends PointerInfoBase {
-  modifiers: EventModifiers
-
-  constructor(
-    public entered: boolean = false,
-    public pressed: boolean = false,
-    public downPosition: DOMPoint = new DOMPoint(),
-    public upPosition: DOMPoint = new DOMPoint,
-    public event: Event = null!,
-  ) {
-    super()
-    this.modifiers = new EventModifiers(this.event)
-  }
+  entered: boolean = false
+  pressed: boolean = false
+  downPosition: DOMPoint = new DOMPoint()
+  upPosition: DOMPoint = new DOMPoint
+  event!: Event
+  modifiers!: EventModifiers
 
   get targetElement() {
     const target = this.event!.target
@@ -129,6 +123,7 @@ function handleBasicPointer(element: PointerTarget, params: Params): () => void 
   const update = (event: Event, x: number, y: number) => {
     if (info.position.x !== x || info.position.y !== y) {
       info.event = event
+      info.modifiers = new EventModifiers(event)
       info.position.x = x
       info.position.y = y
       params.onChange?.(info)
