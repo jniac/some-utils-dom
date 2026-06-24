@@ -2,12 +2,15 @@ import { Vector2Like } from 'some-utils-ts/types'
 import { isAncestorOf } from '../../utils/tree'
 import { PointerInfoBase } from './info'
 import { PointerTarget } from './type'
+import { EventModifiers } from './utils'
 
 class TapInfo extends PointerInfoBase {
   originalUpEvent: PointerEvent = null!
 
   upTimestamp = -1
   tapCount = 1
+
+  modifiers: EventModifiers
 
   /**
    * @deprecated Use `orignalDownEvent` instead. The name was a typo but is kept for backward compatibility.
@@ -32,6 +35,7 @@ class TapInfo extends PointerInfoBase {
   ) {
     super()
     this.position = downPosition
+    this.modifiers = new EventModifiers(originalDownEvent)
   }
 
   override get targetElement() {
